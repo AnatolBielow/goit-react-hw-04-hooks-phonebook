@@ -1,42 +1,65 @@
-import { Formik, Field, ErrorMessage, Form } from "formik";
-import "react-phone-input-2/lib/style.css";
-import "react-phone-input-2/lib/style.css";
-import { ButtonSubmit, Error, FormLabel, Icon } from "./ContactForm.styled";
+import React, { Component } from "react";
+import { ButtonSubmit, FormLabel, Icon } from "./ContactForm.styled";
 import { AiOutlineUserAdd, AiOutlinePhone } from "react-icons/ai";
 import PropTypes from "prop-types";
 
-export const ContactForm = ({ initialValues, onSubmit, validationSchema }) => {
-  return (
-    <Formik
-      initialValues={initialValues}
-      validationSchema={validationSchema}
-      onSubmit={onSubmit}
-    >
-      <Form>
+export default class ContactForm extends Component {
+  state = {
+    name: "",
+    number: "",
+  };
+
+  inputValue = (e) => {
+    this.setState({ [e.target.name]: e.target.value });
+  };
+
+  handleSubmit = (e) => {
+    e.preventDefault();
+    this.props.onSubmit(this.state);
+    this.reset();
+  };
+
+  reset = () => {
+    this.setState({ name: "", number: "" });
+  };
+
+  render() {
+    return (
+      <form onSubmit={this.handleSubmit}>
         <FormLabel htmlFor="name">Name</FormLabel>
-        <Field name="name" />
+        <input
+          type="text"
+          name="name"
+          pattern="^[a-zA-Zа-яА-Я]+(([' -][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$"
+          title="Name may contain only letters, apostrophe, dash and spaces. For example Adrian, Jacob Mercer, Charles de Batz de Castelmore d'Artagnan"
+          required
+          value={this.state.name}
+          onChange={this.inputValue}
+        />
         <Icon>
           <AiOutlineUserAdd />
         </Icon>
-        <ErrorMessage name="name">{(msg) => <Error>{msg}</Error>}</ErrorMessage>
-        <ErrorMessage name="email"></ErrorMessage>
+
         <FormLabel htmlFor="number">Number</FormLabel>
-        <Field name="number" />
+        <input
+          type="tel"
+          name="number"
+          pattern="\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}"
+          title="Phone number must be digits and can contain spaces, dashes, parentheses and can start with +"
+          required
+          value={this.state.number}
+          onChange={this.inputValue}
+        />
         <Icon>
           <AiOutlinePhone />
         </Icon>
-        <ErrorMessage name="number">
-          {(msg) => <Error>{msg}</Error>}
-        </ErrorMessage>
+        <ButtonSubmit type={"submit"}>Submit</ButtonSubmit>
+      </form>
+    );
+  }
+}
 
-        <ButtonSubmit type="submit">Submit</ButtonSubmit>
-      </Form>
-    </Formik>
-  );
-};
-
-ContactForm.propTypes = {
-  initialValues: PropTypes.object.isRequired,
-  onSubmit: PropTypes.func.isRequired,
-  validationSchema: PropTypes.func.isRequired,
+ContactForm.propType = {
+  value: PropTypes.string.isRequired,
+  onChange: PropTypes.func.isRequired,
 };

@@ -1,10 +1,9 @@
 import React from "react";
-import { schema } from "./Helpers/validationSchema";
 import { nanoid } from "nanoid";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { ContactList } from "./Components/ContactList";
-import { ContactForm } from "./Components/ContactForm";
+import ContactForm from "./Components/ContactForm";
 import { formattedNumber } from "./Helpers/formattedNumber";
 import { Filter } from "./Components/Filter";
 import {
@@ -24,7 +23,7 @@ const INITIAL_STATE = {
 class App extends React.Component {
   state = { ...INITIAL_STATE };
 
-  handleSubmit = ({ name, number }, { resetForm }) => {
+  handleSubmit = ({ name, number }) => {
     const { contacts } = this.state;
     const newContact = {
       id: nanoid(),
@@ -34,19 +33,19 @@ class App extends React.Component {
     for (let i = 0; i < contacts.length; i++) {
       const normalizedName = contacts[i].name.toLowerCase();
       const oldNumber = contacts[i].number;
+
       if (newContact.name === normalizedName) {
-        resetForm();
         return toast.error(`Sorry, but ${name} is already in contacts!`);
       }
       if (newContact.number === oldNumber) {
-        resetForm();
-        return toast.error(`Sorry, but ${number} belongs to ${name}!`);
+        return toast.error(
+          `Sorry, but ${number} belongs to ${contacts[i].name}!`
+        );
       }
     }
     this.setState(({ contacts }) => ({
       contacts: [newContact, ...contacts],
     }));
-    resetForm();
     this.resetFilter();
     toast.success(`Contact ${name} is added to Phoonebook!`);
   };
@@ -79,11 +78,7 @@ class App extends React.Component {
         <ToastContainer />
         <PhonebookContainer>
           <Title>Phonebook</Title>
-          <ContactForm
-            initialValues={INITIAL_STATE}
-            validationSchema={schema}
-            onSubmit={this.handleSubmit}
-          />
+          <ContactForm onSubmit={this.handleSubmit} />
         </PhonebookContainer>
         <PhonebookContainer>
           <TitleContacts>Contacts</TitleContacts>
