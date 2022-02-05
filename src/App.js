@@ -32,7 +32,7 @@ class App extends React.Component {
       const normalizedName = contacts[i].name.toLowerCase();
       const oldNumber = contacts[i].number;
 
-      if (newContact.name === normalizedName) {
+      if (newContact.name.toLowerCase() === normalizedName) {
         return toast.error(`Sorry, but ${name} is already in contacts!`);
       }
       if (newContact.number === oldNumber) {
